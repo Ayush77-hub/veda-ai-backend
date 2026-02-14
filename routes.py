@@ -42,7 +42,11 @@ def register_routes(app):
         try:
             return send_from_directory(app.static_folder, 'index.html')
         except Exception as e:
-            app.logger.error(f"Error serving index.html: {str(e)}")
+            app.logger.error(f"Error serving index.html from {app.static_folder}: {str(e)}")
+            import os
+            app.logger.error(f"Static folder exists: {os.path.exists(app.static_folder)}")
+            if os.path.exists(app.static_folder):
+                app.logger.error(f"Static folder contents: {os.listdir(app.static_folder)}")
             return jsonify({
                 'error': 'Server error', 
                 'message': 'An error occurred while serving the main page.'

@@ -11,7 +11,7 @@ from extensions import db, login_manager
 
 def create_app():
     # Create Flask app
-    app = Flask(__name__, static_folder='../frontend/dist', static_url_path='/')
+    app = Flask(__name__, static_folder='../frontend/dist/public', static_url_path='/')
     
     # Configure app
     app.secret_key = os.environ.get("FLASK_SECRET_KEY") or "veda-ai-secret-key"
