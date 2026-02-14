@@ -15,3 +15,8 @@ build/
 *.spec
 error.log
 cookies.txt
+*.db
+*.sqlite
+*.sqlite3
+analytics.csv
+responses.csv

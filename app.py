@@ -23,11 +23,21 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'login'
     
-    # Enable CORS
-    CORS(app)
+    # Enable CORS with production frontend URL
+    frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+    CORS(app, resources={
+        r"/*": {
+            "origins": [frontend_url, "http://localhost:5173", "http://localhost:3000"],
+            "supports_credentials": True
+        }
+    })
     
-    # Configure logging
-    logging.basicConfig(level=logging.INFO)
+    # Configure logging based on environment
+    log_level = logging.DEBUG if os.environ.get("FLASK_ENV") == "development" else logging.INFO
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
     
     with app.app_context():
         # Import models to ensure they are registered with SQLAlchemy
