@@ -35,22 +35,25 @@ def register_routes(app):
         """Serve custom scrollbar CSS file"""
         return app.send_static_file('css/custom-scrollbar.css')
     
-    # Root path to serve index.html
+    # Root path to serve status or index.html
     @app.route('/')
     def index():
-        """Serve the main index.html page for the SPA"""
-        try:
-            return send_from_directory(app.static_folder, 'index.html')
-        except Exception as e:
-            app.logger.error(f"Error serving index.html from {app.static_folder}: {str(e)}")
-            import os
-            app.logger.error(f"Static folder exists: {os.path.exists(app.static_folder)}")
-            if os.path.exists(app.static_folder):
-                app.logger.error(f"Static folder contents: {os.listdir(app.static_folder)}")
-            return jsonify({
-                'error': 'Server error', 
-                'message': 'An error occurred while serving the main page.'
-            }), 500
+        """Serve the main page or API status"""
+        import os
+        index_path = os.path.join(app.static_folder, 'index.html')
+        
+        if os.path.exists(index_path):
+            try:
+                return send_from_directory(app.static_folder, 'index.html')
+            except Exception as e:
+                app.logger.error(f"Error serving index.html: {str(e)}")
+        
+        # If index.html doesn't exist (e.g. on Render), return API info
+        return jsonify({
+            'status': 'online',
+            'message': 'Veda AI API is running. Please access the application via the frontend URL.',
+            'version': '1.1.0'
+        })
     
     # API Status route
     @app.route('/api/status', methods=['GET'])
